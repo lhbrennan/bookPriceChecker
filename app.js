@@ -7,7 +7,7 @@ const mailer = require('./mailer');
   const startTime = Date.now();
   const kindleUrls = await getKindleUrls();
   const books = await getAllPrices(kindleUrls);
-  console.table(books);
+  console.table(books.map(book => ({ title: book.title, price: book.price })));
   const booksOnSale = books.filter(book => book.price < 3);
   if (booksOnSale[0]) {
     mailer(booksOnSale);
