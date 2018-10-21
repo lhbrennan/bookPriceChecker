@@ -1,0 +1,17 @@
+{
+  "name": "bookpricechecker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Luke <lhbrennan@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "airtable": "^0.5.7",
+    "console.table": "^0.10.0",
+    "nodemailer": "^4.6.8",
+    "puppeteer": "^1.9.0"
+  }
+}
