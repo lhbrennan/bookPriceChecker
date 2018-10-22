@@ -1,10 +1,11 @@
 const puppeteer = require('puppeteer');
 
-// define DOM selectors
+/* eslint-disable */
 const kindlePageSelector = '#result_0 > div > div > div > div.a-fixed-left-grid-col.a-col-right > div.a-row.a-spacing-small > div:nth-child(1) > a';
 const titleSelector = '#ebooksProductTitle';
 const priceSelector = '#buybox > div > table > tbody > tr.kindle-price > td.a-color-price.a-size-medium.a-align-bottom';
 const priceSelectorAlt = '#mediaNoAccordion > div.a-row > div.a-column.a-span4.a-text-right.a-span-last > span.a-size-medium.a-color-price.header-price';
+/* eslint-enable */
 
 const chunkArray = (myArray, chunkSize) => {
   const results = [];
@@ -18,7 +19,8 @@ const getPriceByUrl = async function (url, browser) {
   let data;
   try {
     const page = await browser.newPage();
-    // prevents images from loading to speed up scraping
+
+    // prevent browser from loading images
     await page.setRequestInterception(true);
     page.on('request', (req) => {
       if (req.resourceType() === 'image') {
@@ -27,6 +29,8 @@ const getPriceByUrl = async function (url, browser) {
         req.continue();
       }
     });
+
+    // go to URL to get price
     await page.goto(url, { waitFor: 'domcontentloaded' });
     data = await page.evaluate((ts, ps, psa) => {
       const title = document.querySelector(ts).textContent.trim();
@@ -45,11 +49,20 @@ const getPriceByUrl = async function (url, browser) {
 };
 
 async function getUrlByTitle(title, browser) {
-  const page = await browser.newPage();
   let url;
-
+  const page = await browser.newPage();
+  // prevent browser from loading images
+  await page.setRequestInterception(true);
+  page.on('request', (req) => {
+    if (req.resourceType() === 'image') {
+      req.abort();
+    } else {
+      req.continue();
+    }
+  });
+  // search title to find URL
   try {
-    await page.goto('https://www.amazon.com', { waitUntil: 'networkidle2', timeout: 60000 });
+    await page.goto('https://www.amazon.com', { waitUntil: 'networkidle2', timeout: 180000 });
     await page.type('#twotabsearchtextbox', `${title} kindle`);
     await page.click('input.nav-input');
     await page.waitForSelector('#resultsCol');
@@ -60,26 +73,30 @@ async function getUrlByTitle(title, browser) {
   }
   return url;
 }
-// Testing
-// puppeteer.launch()
-//   .then(browser => getUrlByTitle('Solve for Happy', browser))
-//   .then(url => console.log(url));
+
+async function getAllUrlsFromTitles(titles) {
+  const browser = await puppeteer.launch();
+  const chunkedTitles = chunkArray(titles, 5);
+  console.log(chunkedTitles);
+  const urls = await (async function () {
+    const urls = [];
+    console.log('got here');
+    for (const titles of chunkedTitles) {
+      console.log(titles);
+      const urlsChunk = await Promise.all(titles.map(title => getUrlByTitle(title, browser)));
+      urls.push(...urlsChunk);
+    }
+    return urls;
+  })();
+  await browser.close();
+  return urls.filter(url => url);
+}
 
 async function getAllPricesFromUrls(urls) {
   const browser = await puppeteer.launch();
   const prices = await Promise.all(urls.map(url => getPriceByUrl(url, browser)));
   await browser.close();
   return prices.filter(price => price);
-}
-
-// const testUrl = 'https://www.amazon.com/dp/B01HMXV0UQ/ref=dp-kindle-redirect?_encoding=UTF8&btkr=1';
-// getAllPrices([testUrl]);
-
-async function getAllUrlsFromTitles(titles) {
-  const browser = await puppeteer.launch();
-  const urls = await Promise.all(titles.map(title => getUrlByTitle(title, browser)));
-  await browser.close();
-  return urls.filter(url => url);
 }
 
 module.exports = {
