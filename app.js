@@ -1,12 +1,17 @@
 const cTable = require('console.table'); // eslint-disable-line
-const getKindleUrls = require('./getKindleUrls.js');
-const { getAllPricesFromUrls } = require('./getAllPrices.js');
+const { getTitlesNeedingUrls, getKindleUrls } = require('./getFromAirtable.js');
+const { getAllPricesFromUrls, getAllUrlsFromTitles } = require('./scrapeAmazon.js');
 const mailer = require('./mailer');
 
 (async () => {
   const startTime = Date.now();
-  const kindleUrls = await getKindleUrls();
-  const books = await getAllPricesFromUrls(kindleUrls);
+  const titlesNeedingUrls = await getTitlesNeedingUrls();
+  console.log('Titles needing URLs: ', titlesNeedingUrls.length);
+  const scrapedKindleUrls = await getAllUrlsFromTitles(titlesNeedingUrls.slice(0, 8));
+  console.log(scrapedKindleUrls);
+  const storedKindleUrls = await getKindleUrls();
+  const allKindleUrls = [...storedKindleUrls, ...scrapedKindleUrls];
+  const books = await getAllPricesFromUrls(allKindleUrls);
   console.table(books.map(book => ({ title: book.title, price: book.price })));
   const booksOnSale = books.filter(book => book.price < 3);
   if (booksOnSale[0]) {

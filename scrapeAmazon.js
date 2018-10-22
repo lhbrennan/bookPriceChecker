@@ -1,16 +1,23 @@
 const puppeteer = require('puppeteer');
 
+// define DOM selectors
 const kindlePageSelector = '#result_0 > div > div > div > div.a-fixed-left-grid-col.a-col-right > div.a-row.a-spacing-small > div:nth-child(1) > a';
 const titleSelector = '#ebooksProductTitle';
 const priceSelector = '#buybox > div > table > tbody > tr.kindle-price > td.a-color-price.a-size-medium.a-align-bottom';
 const priceSelectorAlt = '#mediaNoAccordion > div.a-row > div.a-column.a-span4.a-text-right.a-span-last > span.a-size-medium.a-color-price.header-price';
 
-const getPrice = async function (url, browser) {
-  let data;
+const chunkArray = (myArray, chunkSize) => {
+  const results = [];
+  while (myArray.length) {
+    results.push(myArray.splice(0, chunkSize));
+  }
+  return results;
+};
 
+const getPriceByUrl = async function (url, browser) {
+  let data;
   try {
     const page = await browser.newPage();
-
     // prevents images from loading to speed up scraping
     await page.setRequestInterception(true);
     page.on('request', (req) => {
@@ -20,7 +27,6 @@ const getPrice = async function (url, browser) {
         req.continue();
       }
     });
-
     await page.goto(url, { waitFor: 'domcontentloaded' });
     data = await page.evaluate((ts, ps, psa) => {
       const title = document.querySelector(ts).textContent.trim();
@@ -40,13 +46,19 @@ const getPrice = async function (url, browser) {
 
 async function getUrlByTitle(title, browser) {
   const page = await browser.newPage();
-  await page.goto('https://www.amazon.com');
-  await page.type('#twotabsearchtextbox', `${title} kindle`);
-  await page.click('input.nav-input');
-  await page.waitForSelector('#resultsCol');
-  return page.evaluate((kps) => {
-    return document.querySelector(kps).href;
-  }, kindlePageSelector);
+  let url;
+
+  try {
+    await page.goto('https://www.amazon.com', { waitUntil: 'networkidle2', timeout: 60000 });
+    await page.type('#twotabsearchtextbox', `${title} kindle`);
+    await page.click('input.nav-input');
+    await page.waitForSelector('#resultsCol');
+    url = page.evaluate(kps => document.querySelector(kps).href, kindlePageSelector);
+  } catch (error) {
+    console.error('CANT GET URL FOR TITLE', title);
+    console.log(error);
+  }
+  return url;
 }
 // Testing
 // puppeteer.launch()
@@ -55,7 +67,7 @@ async function getUrlByTitle(title, browser) {
 
 async function getAllPricesFromUrls(urls) {
   const browser = await puppeteer.launch();
-  const prices = await Promise.all(urls.map(url => getPrice(url, browser)));
+  const prices = await Promise.all(urls.map(url => getPriceByUrl(url, browser)));
   await browser.close();
   return prices.filter(price => price);
 }
@@ -63,16 +75,14 @@ async function getAllPricesFromUrls(urls) {
 // const testUrl = 'https://www.amazon.com/dp/B01HMXV0UQ/ref=dp-kindle-redirect?_encoding=UTF8&btkr=1';
 // getAllPrices([testUrl]);
 
-async function getAllPricesFromTitles(titles) {
+async function getAllUrlsFromTitles(titles) {
   const browser = await puppeteer.launch();
-  const urls = await Promise.all(titles.map(title => getUrlByTitle(title)));
-  const prices = await Promise.all(urls.map(url => getPrice(url, browser)));
+  const urls = await Promise.all(titles.map(title => getUrlByTitle(title, browser)));
   await browser.close();
-  return prices.filter(price => price);
+  return urls.filter(url => url);
 }
 
 module.exports = {
   getAllPricesFromUrls,
-  getAllPricesFromTitles,
+  getAllUrlsFromTitles,
 };
-
