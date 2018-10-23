@@ -4,6 +4,7 @@ const puppeteer = require('puppeteer');
 const kindlePageSelector = '#result_0 > div > div > div > div.a-fixed-left-grid-col.a-col-right > div.a-row.a-spacing-small > div:nth-child(1) > a';
 const titleSelector = '#ebooksProductTitle';
 const priceSelector = '#buybox > div > table > tbody > tr.kindle-price > td.a-color-price.a-size-medium.a-align-bottom';
+// account for alternate kindle page layout
 const priceSelectorAlt = '#mediaNoAccordion > div.a-row > div.a-column.a-span4.a-text-right.a-span-last > span.a-size-medium.a-color-price.header-price';
 /* eslint-enable */
 
@@ -19,7 +20,6 @@ const getPriceByUrl = async function (url, browser) {
   let data;
   try {
     const page = await browser.newPage();
-
     // prevent browser from loading images
     await page.setRequestInterception(true);
     page.on('request', (req) => {
@@ -29,7 +29,6 @@ const getPriceByUrl = async function (url, browser) {
         req.continue();
       }
     });
-
     // go to URL to get price
     await page.goto(url, { waitFor: 'domcontentloaded' });
     data = await page.evaluate((ts, ps, psa) => {
@@ -77,24 +76,32 @@ async function getUrlByTitle(title, browser) {
 async function getAllUrlsFromTitles(titles) {
   const browser = await puppeteer.launch();
   const chunkedTitles = chunkArray(titles, 5);
-  console.log(chunkedTitles);
+  let round = 1;
   const urls = await (async function () {
-    const urls = [];
-    console.log('got here');
-    for (const titles of chunkedTitles) {
-      console.log(titles);
-      const urlsChunk = await Promise.all(titles.map(title => getUrlByTitle(title, browser)));
-      urls.push(...urlsChunk);
+    const results = [];
+    for (const chunk of chunkedTitles) {
+      const urlsChunk = await Promise.all(chunk.map(title => getUrlByTitle(title, browser)));
+      results.push(...urlsChunk);
+      console.log(`Delivered round ${round} of titles, starting with ${chunk[0]}`);
+      round++;
     }
-    return urls;
-  })();
+    return results;
+  }());
   await browser.close();
   return urls.filter(url => url);
 }
 
 async function getAllPricesFromUrls(urls) {
   const browser = await puppeteer.launch();
-  const prices = await Promise.all(urls.map(url => getPriceByUrl(url, browser)));
+  const chunkedUrls = chunkArray(urls, 5);
+  const prices = await (async function () {
+    const results = [];
+    for (const chunk of chunkedUrls) {
+      const pricesChunk = await Promise.all(chunk.map(url => getPriceByUrl(url, browser)));
+      results.push(...pricesChunk);
+    }
+    return results;
+  }());
   await browser.close();
   return prices.filter(price => price);
 }
