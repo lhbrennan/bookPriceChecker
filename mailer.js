@@ -25,4 +25,3 @@ module.exports = (books) => {
 
   transporter.sendMail(mailOptions, (err, info) => console.log(err || info));
 };
-
