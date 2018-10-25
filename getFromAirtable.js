@@ -1,9 +1,8 @@
 const Airtable = require('airtable');
-const { AIRTABLE_API_KEY } = require('./KEYS');
 
 Airtable.configure({
   endpointUrl: 'https://api.airtable.com',
-  apiKey: AIRTABLE_API_KEY,
+  apiKey: process.env.AIRTABLE_API_KEY,
 });
 
 const base = Airtable.base('app9zZLSur5YlFUMZ');
