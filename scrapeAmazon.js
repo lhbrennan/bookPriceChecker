@@ -66,9 +66,8 @@ async function getUrlByTitle(title, browser) {
     await page.click('input.nav-input');
     await page.waitForSelector('#resultsCol');
     url = page.evaluate(kps => document.querySelector(kps).href, kindlePageSelector);
-  } catch (error) {
-    console.error('CANT GET URL FOR TITLE', title);
-    console.log(error);
+  } catch (err) {
+    console.error(`CANT GET URL FOR TITLE ${title}`, err);
   }
   return url;
 }
@@ -80,9 +79,13 @@ async function getAllUrlsFromTitles(titles) {
   const urls = await (async function () {
     const results = [];
     for (const chunk of chunkedTitles) {
-      const urlsChunk = await Promise.all(chunk.map(title => getUrlByTitle(title, browser)));
-      results.push(...urlsChunk);
-      console.log(`Delivered round ${round} of titles, starting with ${chunk[0]}`);
+      try {
+        const urlsChunk = await Promise.all(chunk.map(title => getUrlByTitle(title, browser)));
+        results.push(...urlsChunk);
+        console.log(`Delivered round ${round} of titles, starting with ${chunk[0]}`);
+      } catch (err) {
+        console.error(`Failed to deliver ${round} of titles`, err);
+      }
       round++;
     }
     return results;
@@ -97,8 +100,12 @@ async function getAllPricesFromUrls(urls) {
   const prices = await (async function () {
     const results = [];
     for (const chunk of chunkedUrls) {
-      const pricesChunk = await Promise.all(chunk.map(url => getPriceByUrl(url, browser)));
-      results.push(...pricesChunk);
+      try {
+        const pricesChunk = await Promise.all(chunk.map(url => getPriceByUrl(url, browser)));
+        results.push(...pricesChunk);
+      } catch (err) {
+        console.error('URLs --> Prices chunk failed', err);
+      }
     }
     return results;
   }());
