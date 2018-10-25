@@ -7,6 +7,11 @@ const priceSelector = '#buybox > div > table > tbody > tr.kindle-price > td.a-co
 // account for alternate kindle page layout
 const priceSelectorAlt = '#mediaNoAccordion > div.a-row > div.a-column.a-span4.a-text-right.a-span-last > span.a-size-medium.a-color-price.header-price';
 /* eslint-enable */
+const chromeConfig = [
+  '--no-sandbox',
+  '--disable-setuid-sandbox',
+  '--disable-dev-shm-usage',
+];
 
 const chunkArray = (myArray, chunkSize) => {
   const results = [];
@@ -73,7 +78,7 @@ async function getUrlByTitle(title, browser) {
 }
 
 async function getAllUrlsFromTitles(titles) {
-  const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+  const browser = await puppeteer.launch({ args: chromeConfig });
   const chunkedTitles = chunkArray(titles, 5);
   let round = 1;
   const urls = await (async function () {
@@ -95,7 +100,7 @@ async function getAllUrlsFromTitles(titles) {
 }
 
 async function getAllPricesFromUrls(urls) {
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({ args: chromeConfig });
   const chunkedUrls = chunkArray(urls, 5);
   const prices = await (async function () {
     const results = [];
