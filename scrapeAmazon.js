@@ -74,7 +74,7 @@ async function getUrlByTitle(title, browser) {
 }
 
 async function getAllUrlsFromTitles(titles) {
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
   const chunkedTitles = chunkArray(titles, 5);
   let round = 1;
   const urls = await (async function () {
