@@ -51,7 +51,7 @@ const getPriceByUrl = async function (url, browser) {
       const price = Number(priceElement.textContent.trim().split(' ')[0].slice(1));
       return Promise.resolve({ title, price });
     }, titleSelector, priceSelector, priceSelectorAlt);
-    await page.close();
+    page.close();
   } catch (error) {
     console.log('PROBLEM FETCHING PRICE FOR', url);
   }
@@ -82,8 +82,10 @@ async function getUrlByTitle(title, browser) {
     console.log(`Searched for '${title} kindle' in search box`);
     await page.waitForSelector('#resultsCol');
     console.log('Got results column...');
-    url = await page.evaluate(kps => document.querySelector(kps).href, kindlePageSelector);
-    await page.close();
+    url = await page.evaluate(kps => document.querySelector(kps).href, kindlePageSelector)
+      .then(() => page.close());
+    // console.log('page evlauate has returned with the url: ', url);
+    // console.log('now the page just closed');
     return url;
   } catch (err) {
     console.error(`--> CANT GET URL FOR TITLE ${title}\n`, err);
