@@ -51,7 +51,7 @@ const getPriceByUrl = async function (url, browser) {
       const price = Number(priceElement.textContent.trim().split(' ')[0].slice(1));
       return Promise.resolve({ title, price });
     }, titleSelector, priceSelector, priceSelectorAlt);
-    // await page.close();
+    await page.close();
   } catch (error) {
     console.log('PROBLEM FETCHING PRICE FOR', url);
   }
@@ -83,7 +83,7 @@ async function getUrlByTitle(title, browser) {
     await page.waitForSelector('#resultsCol');
     console.log('Got results column...');
     url = await page.evaluate(kps => document.querySelector(kps).href, kindlePageSelector);
-    // await page.close();
+    await page.close();
     return url;
   } catch (err) {
     console.error(`--> CANT GET URL FOR TITLE ${title}\n`, err);
