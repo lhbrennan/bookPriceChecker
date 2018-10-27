@@ -1,6 +1,6 @@
 const puppeteer = require('puppeteer');
 
-// DOM Selectors
+// ***** DOM Selectors *****
 /* eslint-disable */
 const kindlePageSelector = '#result_0 > div > div > div > div.a-fixed-left-grid-col.a-col-right > div.a-row.a-spacing-small > div:nth-child(1) > a';
 const titleSelector = '#ebooksProductTitle';
@@ -8,7 +8,7 @@ const priceSelector = '#buybox > div > table > tbody > tr.kindle-price > td.a-co
 const priceSelectorAlt = '#mediaNoAccordion > div.a-row > div.a-column.a-span4.a-text-right.a-span-last > span.a-size-medium.a-color-price.header-price';
 /* eslint-enable */
 
-// Launch configs
+// ***** Launch configs *****
 const chromeConfig = [
   '--no-sandbox',
   '--disable-setuid-sandbox',
@@ -17,6 +17,7 @@ const chromeConfig = [
 const headless = process.env.headless !== 'no';
 console.log('headless = ', headless);
 
+// ***** Main functions *****
 const chunkArray = (myArray, chunkSize) => {
   const results = [];
   while (myArray.length) {
@@ -71,19 +72,23 @@ async function getUrlByTitle(title, browser) {
   // search title to find URL
   try {
     await page.goto('https://www.amazon.com', { waitUntil: 'networkidle2', timeout: 180000 });
+    console.log('Opened Amazon, looking for search box');
     await page.type('#twotabsearchtextbox', `${title} kindle`);
     await page.click('input.nav-input');
+    console.log(`Searched for '${title} kindle' in search box`);
     await page.waitForSelector('#resultsCol');
+    console.log('Got results column...');
     url = page.evaluate(kps => document.querySelector(kps).href, kindlePageSelector);
   } catch (err) {
     console.error(`CANT GET URL FOR TITLE ${title}`, err);
   }
+  // await page.close();
   return url;
 }
 
 async function getAllUrlsFromTitles(titles) {
   const browser = await puppeteer.launch({ headless, args: chromeConfig });
-  const chunkedTitles = chunkArray(titles, 5);
+  const chunkedTitles = chunkArray(titles, 3);
   let round = 1;
   const urls = await (async function () {
     const results = [];
@@ -91,7 +96,7 @@ async function getAllUrlsFromTitles(titles) {
       try {
         const urlsChunk = await Promise.all(chunk.map(title => getUrlByTitle(title, browser)));
         results.push(...urlsChunk);
-        console.log(`Delivered round ${round} of titles, starting with ${chunk[0]}`);
+        console.log(`Delivered round ${round} of titles: ${chunk}`);
       } catch (err) {
         console.error(`Failed to deliver ${round} of titles`, err);
       }
