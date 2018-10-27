@@ -47,7 +47,7 @@ const getPriceByUrl = async function (url, browser) {
     await page.setRequestInterception(true);
     const blockResources = ['image', 'stylesheet', 'media', 'font', 'texttrack', 'object', 'beacon', 'csp_report', 'imageset'];
     page.on('request', (req) => {
-      if (blockResources.includes(req.resourceType)) {
+      if (blockResources.includes(req.resourceType())) {
         console.log('blocking resource!');
         req.abort();
       } else {
