@@ -35,13 +35,19 @@ const getPriceByUrl = async function (url, browser) {
     const page = await browser.newPage();
     await page.setViewport({ width: 1280, height: 800 });
     // prevent browser from loading images
+    // await page.setRequestInterception(true);
+    // page.on('request', (req) => {
+    //   if (req.resourceType() === 'image') {
+    //     req.abort();
+    //   } else {
+    //     req.continue();
+    //   }
+    // });
+    // Prevent page from loading unwanted resources
     await page.setRequestInterception(true);
+    const blockResources = ['image', 'stylesheet', 'media', 'font', 'texttrack', 'object', 'beacon', 'csp_report', 'imageset'];
     page.on('request', (req) => {
-      if (req.resourceType() === 'image') {
-        req.abort();
-      } else {
-        req.continue();
-      }
+      blockResources.includes(req.resourceType) ? req.abort() : req.continue();
     });
     // go to URL to get price
     await page.goto(url, { waitFor: 'domcontentloaded' });
@@ -66,13 +72,19 @@ async function getUrlByTitle(title, browser) {
   const page = await browser.newPage();
   await page.setViewport({ width: 1280, height: 800 });
   // prevent browser from loading images
+  // await page.setRequestInterception(true);
+  // page.on('request', (req) => {
+  //   if (req.resourceType() === 'image') {
+  //     req.abort();
+  //   } else {
+  //     req.continue();
+  //   }
+  // });
+  // Prevent page from loading unwanted resources
   await page.setRequestInterception(true);
+  const blockResources = ['image', 'stylesheet', 'media', 'font', 'texttrack', 'object', 'beacon', 'csp_report', 'imageset'];
   page.on('request', (req) => {
-    if (req.resourceType() === 'image') {
-      req.abort();
-    } else {
-      req.continue();
-    }
+    blockResources.includes(req.resourceType) ? req.abort() : req.continue();
   });
   // search title to find URL
   try {
