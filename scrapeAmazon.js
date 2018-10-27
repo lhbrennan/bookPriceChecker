@@ -47,7 +47,12 @@ const getPriceByUrl = async function (url, browser) {
     await page.setRequestInterception(true);
     const blockResources = ['image', 'stylesheet', 'media', 'font', 'texttrack', 'object', 'beacon', 'csp_report', 'imageset'];
     page.on('request', (req) => {
-      blockResources.includes(req.resourceType) ? req.abort() : req.continue();
+      if (blockResources.includes(req.resourceType)) {
+        console.log('blocking resource!');
+        req.abort();
+      } else {
+        req.continue();
+      }
     });
     // go to URL to get price
     await page.goto(url, { waitFor: 'domcontentloaded' });
@@ -84,7 +89,12 @@ async function getUrlByTitle(title, browser) {
   await page.setRequestInterception(true);
   const blockResources = ['image', 'stylesheet', 'media', 'font', 'texttrack', 'object', 'beacon', 'csp_report', 'imageset'];
   page.on('request', (req) => {
-    blockResources.includes(req.resourceType) ? req.abort() : req.continue();
+    if (blockResources.includes(req.resourceType)) {
+      console.log('blocking resource!');
+      req.abort();
+    } else {
+      req.continue();
+    }
   });
   // search title to find URL
   try {
@@ -136,6 +146,7 @@ async function getAllUrlsFromTitles(titles) {
 }
 
 async function getAllPricesFromUrls(urls) {
+  console.log(`Fetching prices for ${urls.length} books`);
   const browser = await puppeteer.launch({
     args: [
       '--no-sandbox',
