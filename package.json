@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js"
+    "start": "node app.js",
+    "start-dev": "AIRTABLE_API_KEY='keybNwIDMyqW4m0Hu' gmailPw='rightWing19' headless='no' node app.js"
   },
   "author": "Luke <lhbrennan@gmail.com>",
   "license": "ISC",
