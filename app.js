@@ -6,8 +6,7 @@ const mailer = require('./mailer');
 (async () => {
   const startTime = Date.now();
   const titlesNeedingUrls = await getTitlesNeedingUrls();
-  const scrapedKindleUrls = await getAllUrlsFromTitles(titlesNeedingUrls.slice(0, 20)); // Remove slice for production
-  // console.log(scrapedKindleUrls);
+  const scrapedKindleUrls = await getAllUrlsFromTitles(titlesNeedingUrls);
   const storedKindleUrls = await getKindleUrls();
   const allKindleUrls = [...storedKindleUrls, ...scrapedKindleUrls];
   const books = await getAllPricesFromUrls(allKindleUrls);
