@@ -1,14 +1,6 @@
 const puppeteer = require('puppeteer');
 
 const headless = process.env.headless !== 'no';
-// puppeteer.defaultArgs({
-//   args: [
-//     '--no-sandbox',
-//     '--disable-setuid-sandbox',
-//     '--disable-dev-shm-usage',
-//   ],
-//   headless,
-// });
 
 console.log('headless = ', headless);
 
@@ -35,20 +27,9 @@ const getPriceByUrl = async function (url, browser) {
     const page = await browser.newPage();
     await page.setViewport({ width: 1280, height: 800 });
     // prevent browser from loading images
-    // await page.setRequestInterception(true);
-    // page.on('request', (req) => {
-    //   if (req.resourceType() === 'image') {
-    //     req.abort();
-    //   } else {
-    //     req.continue();
-    //   }
-    // });
-    // Prevent page from loading unwanted resources
     await page.setRequestInterception(true);
-    const blockResources = ['image', 'stylesheet', 'media', 'font', 'texttrack', 'object', 'beacon', 'csp_report', 'imageset'];
     page.on('request', (req) => {
-      if (blockResources.includes(req.resourceType())) {
-        console.log('blocking resource!');
+      if (req.resourceType() === 'image') {
         req.abort();
       } else {
         req.continue();
@@ -77,20 +58,9 @@ async function getUrlByTitle(title, browser) {
   const page = await browser.newPage();
   await page.setViewport({ width: 1280, height: 800 });
   // prevent browser from loading images
-  // await page.setRequestInterception(true);
-  // page.on('request', (req) => {
-  //   if (req.resourceType() === 'image') {
-  //     req.abort();
-  //   } else {
-  //     req.continue();
-  //   }
-  // });
-  // Prevent page from loading unwanted resources
   await page.setRequestInterception(true);
-  const blockResources = ['image', 'stylesheet', 'media', 'font', 'texttrack', 'object', 'beacon', 'csp_report', 'imageset'];
   page.on('request', (req) => {
-    if (blockResources.includes(req.resourceType())) {
-      console.log('blocking resource!');
+    if (req.resourceType() === 'image') {
       req.abort();
     } else {
       req.continue();
@@ -123,7 +93,7 @@ async function getAllUrlsFromTitles(titles) {
       '--disable-dev-shm-usage',
     ],
     headless,
-    // defaultViewport: { width: 1280, height: 800 },
+    defaultViewport: { width: 1280, height: 800 },
   });
   const chunkedTitles = chunkArray(titles, 5);
   let round = 1;
@@ -146,7 +116,6 @@ async function getAllUrlsFromTitles(titles) {
 }
 
 async function getAllPricesFromUrls(urls) {
-  console.log(`Fetching prices for ${urls.length} books`);
   const browser = await puppeteer.launch({
     args: [
       '--no-sandbox',
@@ -154,7 +123,7 @@ async function getAllPricesFromUrls(urls) {
       '--disable-dev-shm-usage',
     ],
     headless,
-    // defaultViewport: { width: 1280, height: 800 },
+    defaultViewport: { width: 1280, height: 800 },
   });
   const chunkedUrls = chunkArray(urls, 5);
   const prices = await (async function () {
