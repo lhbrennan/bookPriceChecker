@@ -74,8 +74,8 @@ async function getUrlByTitle(title, browser) {
     console.log(`Searched for '${title} kindle' in search box`);
     await page.waitForSelector('#resultsCol');
     console.log('Got results column...');
-    url = await page.evaluate(kps => document.querySelector(kps).href, kindlePageSelector)
-      .then(() => page.close());
+    url = await page.evaluate(kps => document.querySelector(kps).href, kindlePageSelector);
+    page.close();
     // console.log('page evlauate has returned with the url: ', url);
     // console.log('now the page just closed');
     return url;
