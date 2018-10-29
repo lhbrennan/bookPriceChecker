@@ -1,11 +1,16 @@
 const cTable = require('console.table'); // eslint-disable-line
-const { getTitlesNeedingUrls, getKindleUrls } = require('./getFromAirtable.js');
-const { getAllPricesFromUrls, getAllUrlsFromTitles } = require('./scrapeAmazon.js');
+const getBooks = require('./getBooksFromAirtable.js');
+const { getAllPricesFromUrls, findAllLinks } = require('./scrapeAmazon.js');
 const mailer = require('./mailer');
 
 (async () => {
   const startTime = Date.now();
-  const titlesNeedingUrls = await getTitlesNeedingUrls();
+  const books = getBooks();
+  const booksWithoutLinks = books.filter(book => !book.link);
+  // if (booksWithoutLinks.length > 0) {
+  //   const newLinks = findAllLinks(booksWithoutLinks);
+
+  // }
   const scrapedKindleUrls = await getAllUrlsFromTitles(titlesNeedingUrls);
   const storedKindleUrls = await getKindleUrls();
   const allKindleUrls = [...storedKindleUrls, ...scrapedKindleUrls];
