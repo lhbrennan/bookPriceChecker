@@ -32,4 +32,19 @@ const getBooks = async () => {
   });
 };
 
-module.exports = getBooks;
+const addLinks = async(books) => {
+  books.forEach((book) => {
+    base('Books').update(book.id, { Link: book.link }, (err, record) => {
+      if (err) {
+        console.error(`Failed to update link for ${record.get('Title')}\n`, err);
+      } else {
+        console.log(`Successfully updated link for ${record.get('Title')}\n`);
+      }
+    });
+  });
+};
+
+module.exports = {
+  getBooks,
+  addLinks,
+};
