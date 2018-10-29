@@ -57,6 +57,9 @@ async function getUrlByTitle(title, browser) {
   let url;
   const page = await browser.newPage();
   await page.setViewport({ width: 1280, height: 800 });
+  await page.setExtraHTTPHeaders({
+    'Accept-Language': 'en-GB,en-US;q=0.9,en;q=0.8'
+  });
   // prevent browser from loading images
   await page.setRequestInterception(true);
   page.on('request', (req) => {
