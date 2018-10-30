@@ -9,8 +9,9 @@ console.log('headless = ', headless);
 const kindlePageSelector = '#result_0 > div > div > div > div.a-fixed-left-grid-col.a-col-right > div.a-row.a-spacing-small > div:nth-child(1) > a';
 /* eslint-enable */
 
-async function getLinkByTitle(title, browser) {
+async function getLinkByTitle(book, browser) {
   let url;
+  const { title, subtitle, authors } = book;
   const page = await browser.newPage();
   await page.setViewport({ width: 1280, height: 800 });
   await page.setExtraHTTPHeaders({
@@ -27,7 +28,7 @@ async function getLinkByTitle(title, browser) {
 
   try {
     await page.goto('https://www.amazon.com', { waitUntil: 'networkidle2', timeout: 180000 });
-    await page.type('#twotabsearchtextbox', `${title} kindle`);
+    await page.type('#twotabsearchtextbox', `${title} ${subtitle || ''} ${authors[0] || ''}  kindle`);
     await page.click('input.nav-input');
     console.log(`Searched for '${title} kindle' in search box`);
     await page.waitForSelector('#resultsCol');
@@ -56,7 +57,7 @@ async function addLinksToBooks(books) {
   await (async function () {
     for (const book of booksWithLinks) {
       try {
-        const link = await getLinkByTitle(book.title, browser);
+        const link = await getLinkByTitle(book, browser);
         console.log(`Found kindle link for ${book.title}`);
         book.link = link;
       } catch (err) {
