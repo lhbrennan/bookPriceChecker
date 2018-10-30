@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
 module.exports = (books) => {
   const subject = `There are ${books.length} kindle books on sale today 🔥`;
   const html = books.map(book => (
-    `<p><a href="${book.url}">${book.title}</h>: $${book.price}</p>`
+    `<p><a href="${book.link}">${book.title}</h>: $${book.price}</p>`
   )).join('');
 
   const mailOptions = {
