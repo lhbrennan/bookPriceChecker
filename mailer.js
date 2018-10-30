@@ -40,8 +40,12 @@ module.exports = (books) => {
     from: 'lhbext@gmail.com', // sender address
     to: 'lhbrennan@gmail.com', // list of receivers
     subject, // Subject line
+    generateTextFromHTML: true,
     html, // plain text body
   };
 
-  transporter.sendMail(mailOptions, (err, info) => console.log(err || info));
+  transporter.sendMail(mailOptions, (err, info) => {
+    console.log(err || info);
+    transporter.close();
+  });
 };
