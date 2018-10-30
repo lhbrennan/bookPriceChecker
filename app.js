@@ -1,7 +1,7 @@
 const cTable = require('console.table'); // eslint-disable-line
 const { getBooks, addLinks } = require('./airtable.js');
-const { getAllPricesFromUrls } = require('./getPricesFromAmazon.js');
-const addLinksFromAmazon = require('./addLinksFromAmazon.js');
+const getAllPricesFromLinks = require('./getPricesFromAmazon.js');
+const getLinksFromAmazon = require('./getLinksFromAmazon.js');
 const mailer = require('./mailer');
 
 (async () => {
@@ -10,15 +10,15 @@ const mailer = require('./mailer');
 
   const booksWithoutLinks = books.filter(book => !book.link);
   if (booksWithoutLinks.length > 0) {
-    const booksWithNewLinks = await addLinksFromAmazon(booksWithoutLinks);
+    const booksWithNewLinks = await getLinksFromAmazon(booksWithoutLinks);
     addLinks(booksWithNewLinks);
     books = books.filter(book => book.link);
     books = [...books, booksWithNewLinks];
   }
 
-  const booksWithPrices = await getAllPricesFromUrls(books);
+  const booksWithPrices = await getAllPricesFromLinks(books);
   console.table(booksWithPrices.map(book => ({ title: book.title, price: book.price })));
-  const booksOnSale = books.filter(book => book.price < 3);
+  const booksOnSale = books.filter(book => book.price && book.price < 3);
   if (booksOnSale[0]) {
     mailer(booksOnSale);
   }

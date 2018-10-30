@@ -9,7 +9,7 @@ console.log('headless = ', headless);
 const kindlePageSelector = '#result_0 > div > div > div > div.a-fixed-left-grid-col.a-col-right > div.a-row.a-spacing-small > div:nth-child(1) > a';
 /* eslint-enable */
 
-async function getUrlByTitle(title, browser) {
+async function getLinkByTitle(title, browser) {
   let url;
   const page = await browser.newPage();
   await page.setViewport({ width: 1280, height: 800 });
@@ -56,7 +56,7 @@ async function addLinksToBooks(books) {
   await (async function () {
     for (const book of booksWithLinks) {
       try {
-        const link = await getUrlByTitle(book.title, browser);
+        const link = await getLinkByTitle(book.title, browser);
         console.log(`Found kindle link for ${book.title}`);
         book.link = link;
       } catch (err) {

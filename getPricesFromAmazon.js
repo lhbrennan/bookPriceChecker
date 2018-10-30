@@ -10,7 +10,7 @@ const priceSelector = '#buybox > div > table > tbody > tr.kindle-price > td.a-co
 const priceSelectorAlt = '#mediaNoAccordion > div.a-row > div.a-column.a-span4.a-text-right.a-span-last > span.a-size-medium.a-color-price.header-price';
 /* eslint-enable */
 
-const getPriceByUrl = async function (link, browser) {
+const getPriceFromLink = async function (link, browser) {
   let price;
   const page = await browser.newPage();
   await page.setViewport({ width: 1280, height: 800 });
@@ -36,7 +36,7 @@ const getPriceByUrl = async function (link, browser) {
   return price || null;
 };
 
-async function getAllPricesFromUrls(books) {
+async function getAllPricesFromLinks(books) {
   const booksWithPrices = [...books];
   const browser = await puppeteer.launch({
     args: [
@@ -52,7 +52,7 @@ async function getAllPricesFromUrls(books) {
   await (async function () {
     for (const book of booksWithPrices) {
       try {
-        const price = await getPriceByUrl(book.link, browser);
+        const price = await getPriceFromLink(book.link, browser);
         console.log(`Found price for ${book.title}`);
         book.price = price;
       } catch (err) {
@@ -64,6 +64,4 @@ async function getAllPricesFromUrls(books) {
   return booksWithPrices;
 }
 
-module.exports = {
-  getAllPricesFromUrls,
-};
+module.exports = getAllPricesFromLinks;
