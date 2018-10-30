@@ -12,6 +12,7 @@ const kindlePageSelector = '#result_0 > div > div > div > div.a-fixed-left-grid-
 async function getLinkByTitle(book, browser) {
   let url;
   const { title, subtitle, authors } = book;
+  const searchStr = `${title} ${subtitle || authors[0] || ''} kindle`;
   const page = await browser.newPage();
   await page.setViewport({ width: 1280, height: 800 });
   await page.setExtraHTTPHeaders({
@@ -28,9 +29,9 @@ async function getLinkByTitle(book, browser) {
 
   try {
     await page.goto('https://www.amazon.com', { waitUntil: 'networkidle2', timeout: 180000 });
-    await page.type('#twotabsearchtextbox', `${title} ${subtitle || ''} ${authors[0] || ''}  kindle`);
+    await page.type('#twotabsearchtextbox', searchStr);
     await page.click('input.nav-input');
-    console.log(`Searched for '${title} kindle' in search box`);
+    console.log(`Searched for "${searchStr}" in search box`);
     await page.waitForSelector('#resultsCol');
     console.log('Got results column...');
     url = await page.evaluate(kps => document.querySelector(kps).href, kindlePageSelector);
