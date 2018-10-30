@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "AIRTABLE_API_KEY='keybNwIDMyqW4m0Hu' gmailPw='rightWing19' node tests/mailerTest.js",
     "start": "node app.js",
     "start-dev": "AIRTABLE_API_KEY='keybNwIDMyqW4m0Hu' gmailPw='rightWing19' node app.js",
     "start-dev-watch": "AIRTABLE_API_KEY='keybNwIDMyqW4m0Hu' gmailPw='rightWing19' headless='no' node app.js"
