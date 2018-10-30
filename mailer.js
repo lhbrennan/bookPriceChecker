@@ -1,10 +1,32 @@
 const nodemailer = require('nodemailer');
+const { google } = require('googleapis');
+
+const OAuth2 = google.auth.OAuth2;
+
+const oauth2Client = new OAuth2(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  'https://developers.google.com/oauthplayground',
+);
+
+oauth2Client.setCredentials({
+  refresh_token: 'process.env.REFRESH_TOKEN',
+});
+
+// TODO `refreshAccessToken` is deprecated. Use `getRequestHeaders` instead.
+const accessToken = oauth2Client.refreshAccessToken()
+  .then(res => res.credentials.access_token);
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
+    type: 'OAUTH2',
     user: 'lhbext@gmail.com',
-    pass: process.env.gmailPw,
+    clientId: process.env.CLIENT_ID,
+    clientSecret: process.env.CLIENT_SECRET,
+    refreshToken: process.env.REFRESH_TOKEN,
+    accessToken,
+    // pass: process.env.gmailPw,
   },
 });
 
