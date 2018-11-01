@@ -1,7 +1,7 @@
 const cTable = require('console.table'); // eslint-disable-line
-const { getBooks, addLinks } = require('./airtable.js');
-const getAllPricesFromLinks = require('./getPricesFromAmazon.js');
-const getLinksFromAmazon = require('./getLinksFromAmazon.js');
+const { getBooks, addLinks } = require('./airtable');
+const getAllPricesFromLinks = require('./getPricesFromAmazon');
+const getLinksFromAmazon = require('./getLinksFromAmazon');
 const mailer = require('./mailer');
 
 (async () => {

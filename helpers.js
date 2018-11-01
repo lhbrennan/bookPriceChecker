@@ -1,3 +1,4 @@
+// not currently in use
 const chunkArray = (myArray, chunkSize) => {
   const results = [];
   while (myArray.length) {

@@ -4,10 +4,10 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "AIRTABLE_API_KEY='keybNwIDMyqW4m0Hu' gmailPw='rightWing19' CLIENT_ID='965800004538-8m7j1oc84kmrqkdjlu3smtbhrn2sl37v.apps.googleusercontent.com' CLIENT_SECRET='Yz4bOidAno87EilmBJe3Eo8-' REFRESH_TOKEN='1/aPtxc-A_w_aPMyCICCVHD-__AvrQuymK27TVYeyXYU0' node tests/mailerTest.js",
+    "test": "AIRTABLE_API_KEY='keybNwIDMyqW4m0Hu' CLIENT_ID='965800004538-8m7j1oc84kmrqkdjlu3smtbhrn2sl37v.apps.googleusercontent.com' CLIENT_SECRET='Yz4bOidAno87EilmBJe3Eo8-' REFRESH_TOKEN='1/aPtxc-A_w_aPMyCICCVHD-__AvrQuymK27TVYeyXYU0' node tests/mailerTest.js",
     "start": "node app.js",
-    "start-dev": "AIRTABLE_API_KEY='keybNwIDMyqW4m0Hu' gmailPw='rightWing19' CLIENT_ID='965800004538-8m7j1oc84kmrqkdjlu3smtbhrn2sl37v.apps.googleusercontent.com' CLIENT_SECRET='Yz4bOidAno87EilmBJe3Eo8-' REFRESH_TOKEN='1/aPtxc-A_w_aPMyCICCVHD-__AvrQuymK27TVYeyXYU0' node app.js",
-    "start-dev-watch": "AIRTABLE_API_KEY='keybNwIDMyqW4m0Hu' gmailPw='rightWing19' CLIENT_ID='965800004538-8m7j1oc84kmrqkdjlu3smtbhrn2sl37v.apps.googleusercontent.com' CLIENT_SECRET='Yz4bOidAno87EilmBJe3Eo8-' REFRESH_TOKEN='1/aPtxc-A_w_aPMyCICCVHD-__AvrQuymK27TVYeyXYU0' headless='no' node app.js"
+    "start-dev": "AIRTABLE_API_KEY='keybNwIDMyqW4m0Hu' CLIENT_ID='965800004538-8m7j1oc84kmrqkdjlu3smtbhrn2sl37v.apps.googleusercontent.com' CLIENT_SECRET='Yz4bOidAno87EilmBJe3Eo8-' REFRESH_TOKEN='1/aPtxc-A_w_aPMyCICCVHD-__AvrQuymK27TVYeyXYU0' node app.js",
+    "start-dev-watch": "AIRTABLE_API_KEY='keybNwIDMyqW4m0Hu' CLIENT_ID='965800004538-8m7j1oc84kmrqkdjlu3smtbhrn2sl37v.apps.googleusercontent.com' CLIENT_SECRET='Yz4bOidAno87EilmBJe3Eo8-' REFRESH_TOKEN='1/aPtxc-A_w_aPMyCICCVHD-__AvrQuymK27TVYeyXYU0' headless='no' node app.js"
   },
   "author": "Luke <lhbrennan@gmail.com>",
   "license": "ISC",

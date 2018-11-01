@@ -26,7 +26,6 @@ const transporter = nodemailer.createTransport({
     clientSecret: process.env.CLIENT_SECRET,
     refreshToken: process.env.REFRESH_TOKEN,
     accessToken,
-    // pass: process.env.gmailPw,
   },
 });
 
@@ -37,11 +36,11 @@ module.exports = (books) => {
   )).join('');
 
   const mailOptions = {
-    from: 'lhbext@gmail.com', // sender address
-    to: 'lhbrennan@gmail.com', // list of receivers
-    subject, // Subject line
+    from: 'lhbext@gmail.com',
+    to: 'lhbrennan@gmail.com',
     generateTextFromHTML: true,
-    html, // plain text body
+    subject,
+    html,
   };
 
   transporter.sendMail(mailOptions, (err, info) => {
