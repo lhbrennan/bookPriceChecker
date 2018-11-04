@@ -1,3 +1,4 @@
+require('dotenv').config({ silent: process.env.NODE_ENV !== 'development' });
 const cTable = require('console.table'); // eslint-disable-line
 const { getBooks, addLinks } = require('./airtable');
 const getAllPricesFromLinks = require('./getPricesFromAmazon');
