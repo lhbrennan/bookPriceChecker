@@ -10,7 +10,8 @@ const kindlePageSelector = '#result_0 > div > div > div > div.a-fixed-left-grid-
 async function getLinkByTitle(book, browser) {
   let url;
   const { title, subtitle, authors } = book;
-  const searchStr = `${title} ${subtitle || authors[0] || ''} kindle`;
+  const author = authors ? authors[0] : null;
+  const searchStr = `${title} ${subtitle || author || ''} kindle`;
   const page = await browser.newPage();
   await page.setViewport({ width: 1280, height: 800 });
   await page.setExtraHTTPHeaders({
@@ -35,7 +36,7 @@ async function getLinkByTitle(book, browser) {
     url = await page.evaluate(kps => document.querySelector(kps).href, kindlePageSelector);
     page.close();
   } catch (err) {
-    console.error(`\n**********CANT FIND URL FOR TITLE ${title}\n`, err);
+    console.error(`\n**********CAN'T FIND KINDLE URL FOR ${title}\n`, err);
   }
   return url || null;
 }
