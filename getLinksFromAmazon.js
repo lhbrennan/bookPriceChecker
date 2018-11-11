@@ -3,8 +3,6 @@ const puppeteer = require('puppeteer');
 const headless = process.env.headless !== 'no';
 const slowMo = process.env.slowMo || 0;
 
-console.log('headless = ', headless);
-
 /* eslint-disable */
 const kindlePageSelector = '#result_0 > div > div > div > div.a-fixed-left-grid-col.a-col-right > div.a-row.a-spacing-small > div:nth-child(1) > a';
 /* eslint-enable */
