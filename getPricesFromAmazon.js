@@ -3,8 +3,6 @@ const puppeteer = require('puppeteer');
 const headless = process.env.headless !== 'no';
 const slowMo = process.env.slowMo || 0;
 
-console.log('headless = ', headless);
-
 /* eslint-disable */
 const priceSelector = '#buybox > div > table > tbody > tr.kindle-price > td.a-color-price.a-size-medium.a-align-bottom';
 const priceSelectorAlt = '#mediaNoAccordion > div.a-row > div.a-column.a-span4.a-text-right.a-span-last > span.a-size-medium.a-color-price.header-price';
