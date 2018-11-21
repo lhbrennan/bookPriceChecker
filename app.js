@@ -1,7 +1,7 @@
 require('dotenv').config({ silent: process.env.NODE_ENV !== 'development' });
 const cTable = require('console.table'); // eslint-disable-line
 const { getBooks, addLinks } = require('./airtable');
-const getAllPricesFromLinks = require('./getPricesFromAmazon');
+const getPricesFromLinks = require('./getPricesFromAmazon');
 const getLinksFromAmazon = require('./getLinksFromAmazon');
 const mailer = require('./mailer');
 
@@ -16,8 +16,7 @@ const mailer = require('./mailer');
     books = books.filter(book => book.link);
     books = [...books, booksWithNewLinks];
   }
-
-  const booksWithPrices = await getAllPricesFromLinks(books);
+  const booksWithPrices = await getPricesFromLinks(books);
   console.table(booksWithPrices.map(book => ({ title: book.title, price: book.price })));
   const booksOnSale = books.filter(book => book.price && book.price < 3);
   if (booksOnSale[0]) {
