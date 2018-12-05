@@ -28,7 +28,7 @@ const getBooks = async () => {
     });
   }).then(() => {
     const filter = title => title;
-    return books.filter(filter);
+    return books.filter(filter); // check to ensure record is not blank
   });
 };
 
